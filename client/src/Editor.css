@@ -1,0 +1,85 @@
+.editortxt {
+	resize: none;
+	border: 0;
+	outline: 0;
+	border-radius: 0;
+}
+
+.editorwrapper {
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+
+.button {
+	padding: 3px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: none;
+	border-radius: 4px;
+	background-color: white;
+	transition: background-color 0.3s ease-out;
+}
+
+.span {
+	padding: 5px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: white;
+	font-size: 12px;
+}
+
+.button:hover {
+	background-color: silver;
+}
+
+.nav {
+	height: 28px;
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	background-color: white;
+}
+
+.options {
+	padding-right: 5px;
+	display: flex;
+	align-items: center;
+ 	justify-content: center;
+	gap: 10px;
+}
+
+.tabline {
+	width: fit-content;
+}
+
+.tab {
+	height: 100%;
+	font-size: 14px;
+	padding-left: 12px;
+	padding-right: 12px;
+	width: min-content;
+	vertical-align: middle;
+	line-height: 28px;
+	background-color: gray;
+	position: relative;
+}
+
+.tab::after {
+	content: "";
+	border-style: solid;
+	border-width: 14px;
+	border-color: grey;
+	position: absolute;
+	right: -28px;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-bottom-color: transparent;
+}
+
+.CodeMirror {
+	font-family: 'FiraCode';
+	border-radius: 0;
+}
