@@ -25,15 +25,13 @@ class SocketService {
 				console.log("Disconnected Socket id: ", socket.id)
 			})
 
-			this.pty = new Pty(this.socket)
-			this.socket.on("input", (input: any) => {
-				if (this.pty != null)
-					this.pty.write(input)
-			})
-
 			this.socket.on("run", (input: any) => {
-				if (this.pty != null) {
-					this.pty.run(input)
+				this.pty = new Pty(this.socket, input)
+				if (this.socket != null) {
+					this.socket.on("input", (input: any) => {
+						if (this.pty != null)
+							this.pty.write(input)
+					})
 				}
 			})
 		})

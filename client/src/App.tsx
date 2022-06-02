@@ -5,21 +5,15 @@ import {Rnd} from 'react-rnd'
 import TextContext from './TextContext'
 import {useEffect, useState} from 'react'
 import {io, Socket} from 'socket.io-client'
-import {Terminal} from 'xterm'
+
+const socket = io("http://localhost:5000/")
 
 function App() {
 	const [text, setText] = useState("");
-	const [socket, setSocket] = useState<Socket>()
-	const [term, setTerm] = useState<Terminal>()
-
-	useEffect(() => {
-		setSocket(io("http://localhost:5000/"))
-	}, [])
 
 	const run = (t: string) => {
 		setText(t)
-		console.log(text)
-		socket?.emit("run", {program: text, language: "cpp"})
+		socket?.emit("run", {program: t, language: "cpp"})
 	}
 
   return (

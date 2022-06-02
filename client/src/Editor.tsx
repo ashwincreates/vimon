@@ -16,11 +16,11 @@ const Editor = () => {
 	useEffect(() => {
 	}, [])
 
-	const getText = (instance: any, change: any) => {
+	const getText = (instance: any, _: any) => {
 		setText(instance.getValue())
 	}
 
-	const run = (e: any) => {
+	const run = (_: any) => {
 		textContext.setText(text)
 	}
 
@@ -50,7 +50,7 @@ const Editor = () => {
 					value={text}
 					options={{
 						/*keyMap: "vim",*/
-						mode: "text/x-csrx"
+						mode: "text/x-c++src"
 					}}
 					onChange={getText}
 				/>

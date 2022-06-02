@@ -1,41 +1,50 @@
-import os from 'os'
-import {spawn} from 'node-pty';
-import {Socket} from 'socket.io'
+import os from "os";
+import { Socket } from "socket.io";
+import ExecService from "./ExecService";
+import { ChildProcessWithoutNullStreams } from "child_process";
 
 class Pty {
-	shell: string
-	ptyProcess: any;
-	socket: Socket
+	socket: Socket | null;
+	process: ChildProcessWithoutNullStreams | null;
 
-	constructor(socket: Socket) {
-		this.shell = os.platform() === "win32" ? "powershell.exe" : "bash"
-		this.ptyProcess = spawn(this.shell, [], {
-			name: "xterm-colors",
-			cwd: process.env.HOME
-		})
+	constructor(socket: Socket | null, input: any) {
+		this.socket = socket;
+		if (this.socket != null) {
+			var exec = new ExecService(input, this.socket.id);
+			this.process = exec.exec();
 
+			// output streams
+			this.process.stdout.on("data", (data) => {
+				this.sendtoClient("output", data);
+				console.log(data.toString())
+			});
+			this.process.stderr.on("data", (data) => {
+				this.sendtoClient("output", data);
+			});
 
-		this.socket = socket
+			//:TODO special reponses for complition
+			this.process.on("exit", () => {
+				this.sendtoClient("process_complete", "\nExecution Completed");
+				if (this.socket != null) {
+					this.socket.removeAllListeners('input')
+				} 
+			});
+		} else {
+			this.process = null;
+		}
 	}
 
 	write(data: any) {
-		this.ptyProcess.write(data);
-		console.log(data)
+		if (this.process != null) {
+			this.process.stdin.write(data);
+		}
 	}
 
-	sendtoClient(data: any) {
-		this.socket.emit("output", data)
-	}
-
-	run(data: any) {
-		let program: string = data.program
-		program = program.toString().replace(/"/g, '\\"')
-		const run = `echo "${program}" > ${this.socket.id}.cpp && g++ ${this.socket.id}.cpp -o ${this.socket.id} && ./${this.socket.id}\n`
-		this.ptyProcess.write(run)
-		this.ptyProcess.on("data", (data: any) => {
-			this.sendtoClient(data)
-		})
+	sendtoClient(stream: any, data: any) {
+		if (this.socket != null) {
+			this.socket.emit(stream, data.toString());
+		}
 	}
 }
 
-export default Pty
+export default Pty;
